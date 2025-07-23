@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manga Index - ちだのファンティア</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Noto Sans SC/JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        /* 自定義基礎樣式 */
+        body {
+            font-family: 'Inter', 'Noto Sans SC', 'Noto Sans JP', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Material Symbols 樣式 */
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+
+        /* 主題色定義 */
+        :root {
+            --theme-primary: 205 92% 55%; /* 青色 HSL */
+            --theme-on-primary: 205 92% 95%;
+            --theme-primary-container: 205 92% 90%;
+            --theme-on-primary-container: 205 92% 20%;
+            --theme-secondary-container: 205 20% 90%;
+            --theme-on-secondary-container: 205 20% 20%;
+            --theme-surface: 0 0% 98%;
+            --theme-on-surface: 0 0% 10%;
+            --theme-surface-variant: 0 0% 90%;
+            --theme-on-surface-variant: 0 0% 25%;
+            --theme-outline: 0 0% 50%;
+        }
+
+        html.dark {
+            --theme-primary: 205 92% 75%;
+            --theme-on-primary: 205 92% 15%;
+            --theme-primary-container: 205 92% 30%;
+            --theme-on-primary-container: 205 92% 90%;
+            --theme-secondary-container: 205 20% 30%;
+            --theme-on-secondary-container: 205 20% 90%;
+            --theme-surface: 0 0% 6%;
+            --theme-on-surface: 0 0% 95%;
+            --theme-surface-variant: 0 0% 20%;
+            --theme-on-surface-variant: 0 0% 80%;
+            --theme-outline: 0 0% 60%;
+        }
+        
+        /* 使用 CSS 變數應用顏色 */
+        .bg-surface { background-color: hsl(var(--theme-surface)); }
+        .text-on-surface { color: hsl(var(--theme-on-surface)); }
+        .bg-primary-container { background-color: hsl(var(--theme-primary-container)); }
+        .text-on-primary-container { color: hsl(var(--theme-on-primary-container)); }
+        .bg-secondary-container { background-color: hsl(var(--theme-secondary-container)); }
+        .text-on-secondary-container { color: hsl(var(--theme-on-secondary-container)); }
+        .bg-surface-variant { background-color: hsl(var(--theme-surface-variant)); }
+        .text-on-surface-variant { color: hsl(var(--theme-on-surface-variant)); }
+        .border-outline { border-color: hsl(var(--theme-outline)); }
+        .text-primary { color: hsl(var(--theme-primary)); }
+        .fill-primary { fill: hsl(var(--theme-primary)); }
+
+        /* M3 Expressive 風格組件 */
+        .m3-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .m3-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        html.dark .m3-card:hover {
+             box-shadow: 0 8px 24px hsla(var(--theme-primary), 0.2);
+        }
+
+        .m3-icon-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        .m3-icon-button:hover {
+            background-color: hsla(var(--theme-on-surface), 0.08);
+        }
+        
+        .m3-chip {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid hsl(var(--theme-outline));
+        }
+        .m3-chip:hover {
+            background-color: hsl(var(--theme-secondary-container));
+            border-color: hsl(var(--theme-primary));
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface transition-colors duration-300">
+
+    <!-- 主題切換按鈕 -->
+    <div class="fixed top-4 right-4 z-50">
+        <button id="theme-toggle" class="m3-icon-button bg-surface-variant/50 backdrop-blur-sm">
+            <span id="theme-icon" class="material-symbols-outlined text-on-surface-variant"></span>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="w-full">
+        <!-- 頭圖 -->
+        <div class="w-full aspect-[16/9] bg-surface-variant overflow-hidden">
+            <img src="https://manga.0m-p.space/OC-001.jpg" 
+                 alt="Header Image"
+                 class="w-full h-full object-cover"
+                 style="object-position: center 25%;"
+                 onerror="this.onerror=null;this.src='https://placehold.co/1600x900/e0e0e0/757575?text=Image+Not+Found';">
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <!-- 作者資訊 -->
+        <div class="relative -mt-16 sm:-mt-24 px-4">
+            <div class="flex flex-col sm:flex-row items-center sm:items-end space-y-4 sm:space-y-0 sm:space-x-8">
+                <!-- 頭像 -->
+                <div class="flex-shrink-0">
+                    <img class="h-32 w-32 sm:h-48 sm:w-48 rounded-full object-cover border-4 border-surface shadow-lg" 
+                         src="https://manga.0m-p.space/avatar.jpg" 
+                         alt="ちだのファンティア (ちだゆうき) Avatar"
+                         onerror="this.onerror=null;this.src='https://placehold.co/192x192/e0e0e0/757575?text=Avatar';">
+                </div>
+                <!-- 標題和作者 -->
+                <div class="flex-grow text-center sm:text-left pt-4">
+                    <h1 class="text-4xl md:text-6xl font-bold text-on-surface">Manga</h1>
+                    <p class="text-lg md:text-xl text-on-surface-variant mt-1">by ちだのファンティア (ちだゆうき)</p>
+                </div>
+            </div>
+             <!-- SNS 連結 -->
+            <div class="mt-8 flex flex-wrap justify-center sm:justify-start gap-4">
+                <a href="https://www.pixiv.net/users/14904921" target="_blank" rel="noopener noreferrer" class="m3-chip inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-surface-variant text-on-surface-variant">
+                    <img src="https://manga.0m-p.space/Pixiv_logo_2025.svg" class="h-5 w-5" alt="Pixiv Logo">
+                    <span>Pixiv</span>
+                </a>
+                <a href="https://x.com/kochi08kochi" target="_blank" rel="noopener noreferrer" class="m3-chip inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-surface-variant text-on-surface-variant">
+                     <img src="https://manga.0m-p.space/X_logo_2023_original.svg" class="h-5 w-5" alt="X Logo">
+                    <span>X</span>
+                </a>
+                <a href="https://kochi060801.fanbox.cc" target="_blank" rel="noopener noreferrer" class="m3-chip inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-surface-variant text-on-surface-variant">
+                    <span class="font-bold text-primary">F</span>
+                    <span>Fanbox</span>
+                </a>
+                <a href="https://fantia.jp/yukichida_fantia" target="_blank" rel="noopener noreferrer" class="m3-chip inline-flex items-center space-x-2 py-2 px-4 rounded-full bg-surface-variant text-on-surface-variant">
+                    <span class="font-bold text-red-500">F</span>
+                    <span>Fantia</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 分隔線 -->
+        <div class="border-b border-outline/50 my-12"></div>
+
+        <!-- 漫畫列表 -->
+        <section id="manga-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            <!-- 漫畫項目將由 JavaScript 動態插入 -->
+        </section>
+    </main>
+
+    <!-- 嵌入的 JSON 數據 -->
+    <script id="manga-data" type="application/json">
+    [
+      {
+        "title": "OC詰め合わせ",
+        "title-zh": "OC合集",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./OC詰め合わせ/001.jpg",
+        "path": "./OC詰め合わせ"
+      },
+      {
+        "title": "【全編＋おまけ】テスト勉強をするはずだったのに…",
+        "title-zh": "【全集+附赠】本来应该学习备考的…",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./【全編＋おまけ】テスト勉強をするはずだったのに…/001.jpg",
+        "path": "./【全編＋おまけ】テスト勉強をするはずだったのに…"
+      },
+      {
+        "title": "[EN]好きな体位、苦手な体位",
+        "title-zh": "[EN]喜欢的体位、不喜欢的体位",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./好きな体位、苦手な体位/ENG/001.jpg",
+        "path": "./好きな体位、苦手な体位/ENG"
+      },
+      {
+        "title": "[JP]好きな体位、苦手な体位",
+        "title-zh": "[JP]喜欢的体位、不喜欢的体位",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./好きな体位、苦手な体位/JPN/001.jpg",
+        "path": "./好きな体位、苦手な体位/JPN"
+      },
+     {
+        "title": "[セリフなし]テスト勉強をするはずだったのに…(その2)",
+        "title-zh": "[无台词]本来应该学习备考的…（之二）",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./テスト勉強をするはずだったのに…(その2) - セリフなし/001.jpg",
+        "path": "./テスト勉強をするはずだったのに…(その2) - セリフなし/"
+      },
+     {
+        "title": "はじめてのオイルマッサージ(p.12)",
+        "title-zh": "第一次的精油按摩（p.12）",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./はじめてのオイルマッサージ(p.12)/001.jpg",
+        "path": "./はじめてのオイルマッサージ(p.12)/"
+      },
+    {
+        "title": "彼氏持ち黒髪体育系男子を誘惑しよう！",
+        "title-zh": "来诱惑有男朋友的黑发体育系男生吧！",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./彼氏持ち黒髪体育系男子を誘惑しよう！/001.jpg",
+        "path": "./彼氏持ち黒髪体育系男子を誘惑しよう！/"
+      },
+    {
+        "title": "彼氏持ち黒髪体育系男子を誘惑しよう！2",
+        "title-zh": "来诱惑有男朋友的黑发体育系男生吧！2",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./彼氏持ち黒髪体育系男子を誘惑しよう！2/001.jpg",
+        "path": "./彼氏持ち黒髪体育系男子を誘惑しよう！2/"
+      },
+    {
+        "title": "片思い中の友達にバレた…(その1)",
+        "title-zh": "暗恋被朋友发现了…(之一)",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./片思い中の友達にバレた…(その1)/001.jpg",
+        "path": "./片思い中の友達にバレた…(その1)/"
+      },
+    {
+        "title": "片思い中の友達にバレた…(その2)",
+        "title-zh": "暗恋被朋友发现了…(之二)",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./片思い中の友達にバレた…(その2)/001.jpg",
+        "path": "./片思い中の友達にバレた…(その2)/"
+      },
+    {
+        "title": "足フェチ学生くんにへろへろになるまで責められる（全編）",
+        "title-zh": "被足控的男学生折磨到虚脱（全集）",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./足フェチ学生くんにへろへろになるまで責められる（全編）/001.jpg",
+        "path": "./足フェチ学生くんにへろへろになるまで責められる（全編）/"
+      },
+    {
+        "title": "とある民宿の裏メニュー",
+        "title-zh": "某家民宿的隐藏菜单",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./とある民宿の裏メニュー/001.jpg",
+        "path": "./とある民宿の裏メニュー/"
+      },
+    {
+        "title": "会社の後輩と･･･",
+        "title-zh": "和公司的后辈…",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./会社の後輩と･･･/001.jpg",
+        "path": "./会社の後輩と･･･/"
+      },
+    {
+        "title": "発展温泉と知らずに入った大学生くん、金髪巨根男子に食われる",
+        "title-zh": "不知道是同志专用温泉就进去的男大学生，被金发巨根男吃干抹净。",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./発展温泉と知らずに入った大学生くん、金髪巨根男子に食われる/001.jpg",
+        "path": "./発展温泉と知らずに入った大学生くん、金髪巨根男子に食われる/"
+      },
+    {
+        "title": "若手営業くんは年下巨根の誘惑に逆らえない",
+        "title-zh": "无法抵抗年下巨根的诱惑之年轻社员",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./若手営業くんは年下巨根の誘惑に逆らえない/001.jpg",
+        "path": "./若手営業くんは年下巨根の誘惑に逆らえない/"
+      },
+    {
+        "title": "カフェの店長とバイトくんの秘密",
+        "title-zh": "咖啡店店长和打工小弟的秘密",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./カフェの店長とバイトくんの秘密/001.jpg",
+        "path": "./カフェの店長とバイトくんの秘密/"
+      },
+    {
+        "title": "若手リーマンの開発記録",
+        "title-zh": "年轻上班族的开发日记",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./若手リーマンの開発記録/001.jpg",
+        "path": "./若手リーマンの開発記録/"
+      },
+    {
+        "title": "寸止めのつもりが･･･",
+        "title-zh": "本想忍住的",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./寸止めのつもりが･･･/001.jpg",
+        "path": "./寸止めのつもりが･･･/"
+      },
+    {
+        "title": "初めての",
+        "title-zh": "第一次",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./初めての/001.jpg",
+        "path": "./初めての/"
+      },
+    {
+        "title": "不意打ち",
+        "title-zh": "出其不意",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./不意打ち/001.jpg",
+        "path": "./不意打ち/"
+      },
+    {
+        "title": "地味顔メガネくん",
+        "title-zh": "不起眼的眼镜君",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./地味顔メガネくん/001.jpg",
+        "path": "./地味顔メガネくん/"
+      },
+    {
+        "title": "【採取クエスト】オーガの体液",
+        "title-zh": "【采集任务】食人魔的体液",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./オーガの体液/001.jpg",
+        "path": "./オーガの体液/"
+      },
+    {
+        "title": "空手男子の夜",
+        "title-zh": "空手道男子的夜晚",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./空手男子の夜/001.jpg",
+        "path": "./空手男子の夜/"
+      },
+    {
+        "title": "友達とお風呂",
+        "title-zh": "和朋友一起洗澡",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./友達とお風呂/001.jpg",
+        "path": "./友達とお風呂/"
+      },
+    {
+        "title": "「つけろって言ったのに･･･！」",
+        "title-zh": "「我不是叫你戴上吗･･･！」",
+        "author": "ちだのファンティア (ちだゆうき)",
+        "jacket": "./つけろって言ったのに･･･！/001.jpg",
+        "path": "./つけろって言ったのに･･･！/"
+      }
+    ]
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 主題切換邏輯 ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const docElement = document.documentElement;
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    docElement.classList.add('dark');
+                    docElement.classList.remove('light');
+                    themeIcon.textContent = 'light_mode';
+                } else {
+                    docElement.classList.remove('dark');
+                    docElement.classList.add('light');
+                    themeIcon.textContent = 'dark_mode';
+                }
+            };
+
+            // 檢查本地存儲或系統偏好來設置初始主題
+            const initialTheme = (() => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    return savedTheme; // 優先使用用戶手動選擇的主題
+                }
+                // 如果沒有手動選擇，則根據系統設定
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                }
+                return 'light'; // 默認為淺色
+            })();
+            
+            applyTheme(initialTheme);
+
+            // 監聽系統主題變化
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                // 只有在用戶沒有手動選擇主題時（即localStorage中沒有記錄），才跟隨系統
+                if (!localStorage.getItem('theme')) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+
+            // 手動切換主題
+            themeToggle.addEventListener('click', () => {
+                const newTheme = docElement.classList.contains('dark') ? 'light' : 'dark';
+                // 手動切換時，將選擇保存到本地存儲，以便覆蓋系統設定
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+
+            // --- 漫畫列表渲染邏輯 ---
+            const mangaListContainer = document.getElementById('manga-list');
+            const mangaDataElement = document.getElementById('manga-data');
+            
+            if (mangaListContainer && mangaDataElement) {
+                try {
+                    const mangaData = JSON.parse(mangaDataElement.textContent);
+                    
+                    mangaData.forEach(manga => {
+                        const card = document.createElement('a');
+                        card.href = manga.path; // 假設點擊後跳轉到漫畫路徑
+                        card.className = "m3-card group relative block bg-surface-variant rounded-3xl overflow-hidden shadow-md";
+                        card.setAttribute('title', `${manga.title}\n${manga['title-zh']}`);
+
+                        const figure = document.createElement('figure');
+                        
+                        const img = document.createElement('img');
+                        img.src = manga.jacket;
+                        img.alt = manga.title;
+                        img.className = "w-full aspect-[3/4] object-cover transition-transform duration-300 group-hover:scale-105";
+                        img.setAttribute('loading', 'lazy');
+                        img.onerror = function() {
+                            this.onerror=null;
+                            this.src=`https://placehold.co/300x400/e0e0e0/757575?text=${encodeURIComponent(manga.title)}`;
+                        };
+
+                        const figcaption = document.createElement('figcaption');
+                        figcaption.className = "p-4";
+                        
+                        const title = document.createElement('h3');
+                        title.className = "font-semibold text-on-surface-variant truncate";
+                        title.textContent = manga.title;
+
+                        // 懸停時顯示的完整標題
+                        const fullTitleTooltip = document.createElement('div');
+                        fullTitleTooltip.className = "absolute inset-0 bg-black/70 p-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300";
+                        const fullTitleText = document.createElement('p');
+                        fullTitleText.className = "text-white text-center text-sm";
+                        fullTitleText.innerHTML = `${manga.title}<br>${manga['title-zh']}`;
+                        fullTitleTooltip.appendChild(fullTitleText);
+
+
+                        figcaption.appendChild(title);
+                        figure.appendChild(img);
+                        figure.appendChild(figcaption);
+                        card.appendChild(figure);
+                        card.appendChild(fullTitleTooltip);
+
+                        mangaListContainer.appendChild(card);
+                    });
+
+                } catch (error) {
+                    console.error("無法解析或渲染漫畫數據:", error);
+                    mangaListContainer.innerHTML = `<p class="text-on-surface-variant col-span-full text-center">無法載入漫畫列表。</p>`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
